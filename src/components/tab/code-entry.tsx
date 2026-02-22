@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
 }
 
 export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
+  const t = useTranslations("CodeEntry")
   const [digits, setDigits] = useState(["", "", "", ""])
   const [error, setError] = useState("")
   const [attempts, setAttempts] = useState(0)
@@ -39,9 +41,9 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
       const newAttempts = attempts + 1
       setAttempts(newAttempts)
       if (newAttempts >= maxAttempts) {
-        setError("Too many attempts. Try again later.")
+        setError(t("tooManyAttempts"))
       } else {
-        setError("Wrong code")
+        setError(t("wrongCode"))
       }
       setDigits(["", "", "", ""])
       refs[0].current?.focus()
@@ -90,9 +92,9 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
   return (
     <div className="flex flex-col items-center gap-6 pt-24">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Enter code</h1>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Ask the tab creator for the 4-digit code
+          {t("description")}
         </p>
       </div>
 
@@ -117,7 +119,7 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
 
       {error && <p className="text-sm text-destructive">{error}</p>}
       {checking && (
-        <p className="text-sm text-muted-foreground">Checking…</p>
+        <p className="text-sm text-muted-foreground">{t("checking")}</p>
       )}
     </div>
   )

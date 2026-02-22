@@ -1,0 +1,82 @@
+{
+  "Home": {
+    "subtitle": "Dela utgifter. Ingen registrering kr\u00e4vs."
+  },
+  "YourTabs": {
+    "heading": "Dina notor"
+  },
+  "CodeEntry": {
+    "title": "Ange kod",
+    "description": "Fr\u00e5ga den som skapade notan om den 4-siffriga koden",
+    "wrongCode": "Fel kod",
+    "tooManyAttempts": "F\u00f6r m\u00e5nga f\u00f6rs\u00f6k. F\u00f6rs\u00f6k igen senare.",
+    "checking": "Kontrollerar\u2026"
+  },
+  "NameEntry": {
+    "title": "Vad heter du?",
+    "description": "Det h\u00e4r \u00e4r hur andra ser dig",
+    "placeholder": "Ditt namn",
+    "join": "G\u00e5 med",
+    "sessionError": "Sessionsfel. Ladda om sidan.",
+    "joinError": "Kunde inte g\u00e5 med. F\u00f6rs\u00f6k igen."
+  },
+  "Dashboard": {
+    "codeLabel": "Kod:"
+  },
+  "ExpenseForm": {
+    "amountLabel": "Belopp ({currency})",
+    "descriptionLabel": "Beskrivning",
+    "descriptionPlaceholder": "Vad var det f\u00f6r?",
+    "whoPaid": "Vem betalade?",
+    "adding": "L\u00e4gger till\u2026",
+    "addExpense": "L\u00e4gg till utgift",
+    "editExpense": "Redigera utgift",
+    "saving": "Sparar\u2026",
+    "saveChanges": "Spara \u00e4ndringar",
+    "cancel": "Avbryt",
+    "splitAmong": "Dela mellan",
+    "membersCount": "{count} av {total} medlemmar",
+    "splitMode": "Delningsl\u00e4ge",
+    "equal": "Lika",
+    "customSplit": "Anpassad",
+    "splitTotal": "Totalt: {current} / {total} {currency}",
+    "splitMismatch": "m\u00e5ste matcha utgiftsbeloppet"
+  },
+  "ExpenseList": {
+    "heading": "Utgifter",
+    "empty": "Inga utgifter \u00e4nnu. L\u00e4gg till en ovan!",
+    "deleted": "Utgift borttagen",
+    "undo": "\u00c5ngra",
+    "unknown": "Ok\u00e4nd",
+    "splitInfo": "Delat: {count} av {total}"
+  },
+  "BalanceView": {
+    "heading": "Saldon",
+    "settled": "Alla \u00e4r kvitt!",
+    "settleButton": "Betala",
+    "settlementRecorded": "Betalning registrerad"
+  },
+  "SettlementList": {
+    "heading": "Betalningar",
+    "removed": "Betalning borttagen",
+    "undo": "\u00c5ngra",
+    "unknown": "Ok\u00e4nd"
+  },
+  "MemberList": {
+    "heading": "Medlemmar ({count})",
+    "you": "(du)"
+  },
+  "Categories": {
+    "pizza": "Pizza",
+    "drink": "Dryck",
+    "beer": "\u00d6l",
+    "custom": "\u00d6vrigt"
+  },
+  "Common": {
+    "loading": "Laddar\u2026"
+  },
+  "StartTab": {
+    "startTab": "Starta en nota",
+    "creating": "Skapar\u2026"
+  }
+}

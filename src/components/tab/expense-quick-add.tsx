@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { CATEGORIES } from "@/lib/constants"
 
@@ -8,6 +9,8 @@ type Props = {
 }
 
 export function ExpenseQuickAdd({ onSelect }: Props) {
+  const t = useTranslations("Categories")
+
   return (
     <div className="grid grid-cols-4 gap-2">
       {CATEGORIES.map((cat) => (
@@ -18,7 +21,7 @@ export function ExpenseQuickAdd({ onSelect }: Props) {
           onClick={() => onSelect(cat.key)}
         >
           <span className="text-xl">{cat.emoji}</span>
-          <span className="text-xs">{cat.label}</span>
+          <span className="text-xs">{t(cat.key)}</span>
         </Button>
       ))}
     </div>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, use } from "react"
+import { useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 import { useLocalTabs } from "@/hooks/use-local-tabs"
 import { CodeEntry } from "@/components/tab/code-entry"
@@ -25,6 +26,7 @@ export default function TabPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = use(params)
+  const t = useTranslations("Common")
   const [state, setState] = useState<State>({ step: "loading" })
   const { saveTab } = useLocalTabs()
 
@@ -156,7 +158,7 @@ export default function TabPage({
   if (state.step === "loading") {
     return (
       <div className="flex justify-center pt-24">
-        <p className="text-muted-foreground">Loading…</p>
+        <p className="text-muted-foreground">{t("loading")}</p>
       </div>
     )
   }

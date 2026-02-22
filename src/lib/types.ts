@@ -28,6 +28,23 @@ export type Expense = {
   deleted_at: string | null
 }
 
+export type ExpenseSplit = {
+  id: string
+  expense_id: string
+  member_id: string
+  amount: number
+}
+
+export type RecordedSettlement = {
+  id: string
+  tab_id: string
+  from_member: string
+  to_member: string
+  amount: number
+  created_at: string
+  deleted_at: string | null
+}
+
 export type Balance = {
   memberId: string
   memberName: string

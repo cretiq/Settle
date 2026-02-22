@@ -1,0 +1,82 @@
+{
+  "Home": {
+    "subtitle": "Split expenses. No signup needed."
+  },
+  "YourTabs": {
+    "heading": "Your Tabs"
+  },
+  "CodeEntry": {
+    "title": "Enter code",
+    "description": "Ask the tab creator for the 4-digit code",
+    "wrongCode": "Wrong code",
+    "tooManyAttempts": "Too many attempts. Try again later.",
+    "checking": "Checking\u2026"
+  },
+  "NameEntry": {
+    "title": "What\u2019s your name?",
+    "description": "This is how others will see you",
+    "placeholder": "Your name",
+    "join": "Join",
+    "sessionError": "Session error. Refresh the page.",
+    "joinError": "Could not join. Try again."
+  },
+  "Dashboard": {
+    "codeLabel": "Code:"
+  },
+  "ExpenseForm": {
+    "amountLabel": "Amount ({currency})",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "What was it for?",
+    "whoPaid": "Who paid?",
+    "adding": "Adding\u2026",
+    "addExpense": "Add expense",
+    "editExpense": "Edit expense",
+    "saving": "Saving\u2026",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "splitAmong": "Split among",
+    "membersCount": "{count} of {total} members",
+    "splitMode": "Split mode",
+    "equal": "Equal",
+    "customSplit": "Custom",
+    "splitTotal": "Total: {current} / {total} {currency}",
+    "splitMismatch": "must match expense amount"
+  },
+  "ExpenseList": {
+    "heading": "Expenses",
+    "empty": "No expenses yet. Add one above!",
+    "deleted": "Expense deleted",
+    "undo": "Undo",
+    "unknown": "Unknown",
+    "splitInfo": "Split: {count} of {total}"
+  },
+  "BalanceView": {
+    "heading": "Balances",
+    "settled": "All settled up!",
+    "settleButton": "Settle",
+    "settlementRecorded": "Settlement recorded"
+  },
+  "SettlementList": {
+    "heading": "Settlements",
+    "removed": "Settlement removed",
+    "undo": "Undo",
+    "unknown": "Unknown"
+  },
+  "MemberList": {
+    "heading": "Members ({count})",
+    "you": "(you)"
+  },
+  "Categories": {
+    "pizza": "Pizza",
+    "drink": "Drink",
+    "beer": "Beer",
+    "custom": "Other"
+  },
+  "Common": {
+    "loading": "Loading\u2026"
+  },
+  "StartTab": {
+    "startTab": "Start a Tab",
+    "creating": "Creating\u2026"
+  }
+}

@@ -1,8 +1,8 @@
 export const CATEGORIES = [
-  { key: "pizza", label: "Pizza", emoji: "🍕" },
-  { key: "drink", label: "Drink", emoji: "🍹" },
-  { key: "beer", label: "Beer", emoji: "🍺" },
-  { key: "custom", label: "Other", emoji: "📝" },
+  { key: "pizza", emoji: "🍕" },
+  { key: "drink", emoji: "🍹" },
+  { key: "beer", emoji: "🍺" },
+  { key: "custom", emoji: "📝" },
 ] as const
 
 export const CURRENCY = "kr"

@@ -1,33 +1,45 @@
-import { type Expense, type Member, type Balance, type Settlement } from "./types"
+import { type Expense, type ExpenseSplit, type Member, type RecordedSettlement, type Balance, type Settlement } from "./types"
 
 export function calculateBalances(
   expenses: Expense[],
-  members: Member[]
+  splits: ExpenseSplit[],
+  members: Member[],
+  recordedSettlements: RecordedSettlement[] = []
 ): Balance[] {
   const activeExpenses = expenses.filter((e) => !e.deleted_at)
   const activeMembers = members.filter((m) => m.is_active)
-  const memberCount = activeMembers.length
 
-  if (memberCount === 0) return []
+  if (activeMembers.length === 0) return []
 
   const nets = new Map<string, number>()
   for (const m of activeMembers) {
     nets.set(m.id, 0)
   }
 
-  for (const expense of activeExpenses) {
-    const share = Math.floor(expense.amount / memberCount)
-    const remainder = expense.amount - share * memberCount
+  // Build splits lookup by expense_id
+  const splitsByExpense = new Map<string, ExpenseSplit[]>()
+  for (const s of splits) {
+    const arr = splitsByExpense.get(s.expense_id) ?? []
+    arr.push(s)
+    splitsByExpense.set(s.expense_id, arr)
+  }
 
-    // Payer gets credited
+  for (const expense of activeExpenses) {
+    // Credit payer full amount
     nets.set(expense.paid_by, (nets.get(expense.paid_by) ?? 0) + expense.amount)
 
-    // Everyone (including payer) gets debited their share
-    const sortedMembers = [...activeMembers].sort((a, b) => a.id.localeCompare(b.id))
-    for (let i = 0; i < sortedMembers.length; i++) {
-      const debit = share + (i < remainder ? 1 : 0)
-      nets.set(sortedMembers[i].id, (nets.get(sortedMembers[i].id) ?? 0) - debit)
+    // Debit each participant per their split amount
+    const expSplits = splitsByExpense.get(expense.id) ?? []
+    for (const split of expSplits) {
+      nets.set(split.member_id, (nets.get(split.member_id) ?? 0) - split.amount)
     }
+  }
+
+  // Apply recorded settlements
+  const activeSettlements = recordedSettlements.filter((s) => !s.deleted_at)
+  for (const s of activeSettlements) {
+    nets.set(s.from_member, (nets.get(s.from_member) ?? 0) + s.amount)
+    nets.set(s.to_member, (nets.get(s.to_member) ?? 0) - s.amount)
   }
 
   return activeMembers.map((m) => ({

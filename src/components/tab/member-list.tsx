@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import type { Member } from "@/lib/types"
 
 type Props = {
@@ -8,10 +9,12 @@ type Props = {
 }
 
 export function MemberList({ members, currentMemberId }: Props) {
+  const t = useTranslations("MemberList")
+
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium text-muted-foreground">
-        Members ({members.length})
+        {t("heading", { count: members.length })}
       </h3>
       <div className="flex flex-wrap gap-2">
         {members.map((m) => (
@@ -24,7 +27,7 @@ export function MemberList({ members, currentMemberId }: Props) {
             }`}
           >
             {m.name}
-            {m.id === currentMemberId && " (you)"}
+            {m.id === currentMemberId && ` ${t("you")}`}
           </span>
         ))}
       </div>

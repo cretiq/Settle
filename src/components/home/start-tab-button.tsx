@@ -2,10 +2,12 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 
 export function StartTabButton() {
   const router = useRouter()
+  const t = useTranslations("StartTab")
   const [loading, setLoading] = useState(false)
 
   async function handleClick() {
@@ -32,7 +34,7 @@ export function StartTabButton() {
       size="lg"
       className="w-full text-lg"
     >
-      {loading ? "Creating…" : "Start a Tab"}
+      {loading ? t("creating") : t("startTab")}
     </Button>
   )
 }

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
-import type { Expense } from "@/lib/types"
+import type { Expense, ExpenseSplit } from "@/lib/types"
 
 export function useExpenses(tabId: string | null) {
   const [expenses, setExpenses] = useState<Expense[]>([])
+  const [splits, setSplits] = useState<ExpenseSplit[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -13,21 +14,36 @@ export function useExpenses(tabId: string | null) {
 
     const supabase = createClient()
 
-    async function fetch() {
-      const { data } = await supabase
+    async function fetchAll() {
+      const { data: expData } = await supabase
         .from("expenses")
         .select("*")
         .eq("tab_id", tabId)
         .is("deleted_at", null)
         .order("created_at", { ascending: false })
 
-      if (data) setExpenses(data)
+      if (expData) {
+        setExpenses(expData)
+
+        // Fetch splits for all expenses in this tab
+        const expenseIds = expData.map((e: Expense) => e.id)
+        if (expenseIds.length > 0) {
+          const { data: splitData } = await supabase
+            .from("expense_splits")
+            .select("*")
+            .in("expense_id", expenseIds)
+
+          if (splitData) setSplits(splitData)
+        } else {
+          setSplits([])
+        }
+      }
       setLoading(false)
     }
 
-    fetch()
+    fetchAll()
 
-    const channel = supabase
+    const expChannel = supabase
       .channel(`expenses:${tabId}`)
       .on(
         "postgres_changes",
@@ -38,15 +54,31 @@ export function useExpenses(tabId: string | null) {
           filter: `tab_id=eq.${tabId}`,
         },
         () => {
-          fetch()
+          fetchAll()
+        }
+      )
+      .subscribe()
+
+    const splitChannel = supabase
+      .channel(`expense_splits:${tabId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "expense_splits",
+        },
+        () => {
+          fetchAll()
         }
       )
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      supabase.removeChannel(expChannel)
+      supabase.removeChannel(splitChannel)
     }
   }, [tabId])
 
-  return { expenses, loading }
+  return { expenses, splits, loading }
 }

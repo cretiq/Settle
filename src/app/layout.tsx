@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import { NextIntlClientProvider } from "next-intl"
+import { getLocale, getMessages } from "next-intl/server"
 import { Toaster } from "sonner"
 import "./globals.css"
 
@@ -18,20 +20,25 @@ export const metadata: Metadata = {
   description: "Split expenses without the hassle",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale()
+  const messages = await getMessages()
+
   return (
-    <html lang="en">
+    <html lang={locale} data-theme="cupcake">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main className="mx-auto min-h-dvh max-w-md px-4 py-6">
-          {children}
-        </main>
-        <Toaster position="bottom-center" />
+        <NextIntlClientProvider messages={messages}>
+          <main className="mx-auto min-h-dvh max-w-md px-4 py-6">
+            {children}
+          </main>
+          <Toaster position="bottom-center" />
+        </NextIntlClientProvider>
       </body>
     </html>
   )

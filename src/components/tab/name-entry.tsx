@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
@@ -11,6 +12,7 @@ type Props = {
 }
 
 export function NameEntry({ tabId, onJoined }: Props) {
+  const t = useTranslations("NameEntry")
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -29,7 +31,7 @@ export function NameEntry({ tabId, onJoined }: Props) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      setError("Session error. Refresh the page.")
+      setError(t("sessionError"))
       setLoading(false)
       return
     }
@@ -42,7 +44,7 @@ export function NameEntry({ tabId, onJoined }: Props) {
       // Unique constraint = already a member — fall through to select below
       if (!insertError.message.includes("unique") && insertError.code !== "23505") {
         setLoading(false)
-        setError("Could not join. Try again.")
+        setError(t("joinError"))
         return
       }
     }
@@ -60,16 +62,16 @@ export function NameEntry({ tabId, onJoined }: Props) {
     if (member) {
       onJoined(member.id)
     } else {
-      setError("Could not join. Try again.")
+      setError(t("joinError"))
     }
   }
 
   return (
     <div className="flex flex-col items-center gap-6 pt-24">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">What&apos;s your name?</h1>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          This is how others will see you
+          {t("description")}
         </p>
       </div>
 
@@ -77,13 +79,13 @@ export function NameEntry({ tabId, onJoined }: Props) {
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Your name"
+          placeholder={t("placeholder")}
           maxLength={30}
           autoFocus
           disabled={loading}
         />
         <Button type="submit" disabled={!name.trim() || loading}>
-          {loading ? "…" : "Join"}
+          {loading ? "\u2026" : t("join")}
         </Button>
       </form>
 
