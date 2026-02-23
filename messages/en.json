@@ -41,7 +41,11 @@
     "equal": "Equal",
     "customSplit": "Custom",
     "splitTotal": "Total: {current} / {total} {currency}",
-    "splitMismatch": "must match expense amount"
+    "splitMismatch": "must match expense amount",
+    "percentTotal": "Total: {current}%",
+    "percentMismatch": "must equal 100%",
+    "equalPercent": "Equal %",
+    "yourShare": "Your share: {amount} {currency}"
   },
   "ExpenseList": {
     "heading": "Expenses",
@@ -55,7 +59,11 @@
     "heading": "Balances",
     "settled": "All settled up!",
     "settleButton": "Settle",
-    "settlementRecorded": "Settlement recorded"
+    "settlementRecorded": "Settlement recorded",
+    "confirmTitle": "Confirm settlement",
+    "confirmDescription": "{from} pays {to} {amount}",
+    "confirm": "Mark as settled",
+    "cancel": "Cancel"
   },
   "SettlementList": {
     "heading": "Settlements",

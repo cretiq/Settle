@@ -41,7 +41,11 @@
     "equal": "Lika",
     "customSplit": "Anpassad",
     "splitTotal": "Totalt: {current} / {total} {currency}",
-    "splitMismatch": "m\u00e5ste matcha utgiftsbeloppet"
+    "splitMismatch": "m\u00e5ste matcha utgiftsbeloppet",
+    "percentTotal": "Totalt: {current}%",
+    "percentMismatch": "måste vara 100%",
+    "equalPercent": "Lika %",
+    "yourShare": "Din andel: {amount} {currency}"
   },
   "ExpenseList": {
     "heading": "Utgifter",
@@ -55,7 +59,11 @@
     "heading": "Saldon",
     "settled": "Alla \u00e4r kvitt!",
     "settleButton": "Betala",
-    "settlementRecorded": "Betalning registrerad"
+    "settlementRecorded": "Betalning registrerad",
+    "confirmTitle": "Bekräfta betalning",
+    "confirmDescription": "{from} betalar {to} {amount}",
+    "confirm": "Markera som betald",
+    "cancel": "Avbryt"
   },
   "SettlementList": {
     "heading": "Betalningar",

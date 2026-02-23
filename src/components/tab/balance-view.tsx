@@ -5,6 +5,18 @@ import { toast } from "sonner"
 import { calculateBalances, simplifyDebts } from "@/lib/balance"
 import { formatAmount } from "@/lib/constants"
 import { createClient } from "@/lib/supabase/client"
+import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import type { Expense, ExpenseSplit, Member, RecordedSettlement } from "@/lib/types"
 
 type Props = {
@@ -41,7 +53,7 @@ export function BalanceView({ expenses, splits, members, settlements, tabId, cur
       {suggestedSettlements.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("settled")}</p>
       ) : (
-        <div className="space-y-1">
+        <div className="space-y-2">
           {suggestedSettlements.map((s, i) => (
             <div
               key={i}
@@ -49,19 +61,38 @@ export function BalanceView({ expenses, splits, members, settlements, tabId, cur
             >
               <span>
                 <span className="font-medium">{s.fromName}</span>
-                {" \u2192 "}
+                {" → "}
                 <span className="font-medium">{s.toName}</span>
               </span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <span className="font-mono font-medium">
                   {formatAmount(s.amount)}
                 </span>
-                <button
-                  onClick={() => handleSettle(s.from, s.to, s.amount)}
-                  className="rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-                >
-                  {t("settleButton")}
-                </button>
+                {currentMemberId === s.from && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm">{t("settleButton")}</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t("confirmTitle")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("confirmDescription", {
+                            from: s.fromName,
+                            to: s.toName,
+                            amount: formatAmount(s.amount),
+                          })}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleSettle(s.from, s.to, s.amount)}>
+                          {t("confirm")}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
               </div>
             </div>
           ))}
