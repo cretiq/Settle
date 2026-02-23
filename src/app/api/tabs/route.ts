@@ -6,6 +6,12 @@ export async function POST(request: Request) {
   const supabase = await createClient()
   const body = await request.json().catch(() => ({}))
 
+  const locale = request.headers.get("cookie")
+    ?.split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith("locale="))
+    ?.split("=")[1]
+
   const code = generateCode()
   const name = body.name || null
   let slug = ""
@@ -13,7 +19,7 @@ export async function POST(request: Request) {
 
   // Retry slug generation on collision
   for (let attempt = 0; attempt < 5; attempt++) {
-    slug = generateSlug()
+    slug = generateSlug(locale)
     if (attempt >= 3) slug += `-${Math.floor(10 + Math.random() * 90)}`
 
     const { data, error } = await supabase.rpc("create_tab", {

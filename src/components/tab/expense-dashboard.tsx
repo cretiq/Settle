@@ -2,9 +2,12 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { Share2 } from "lucide-react"
+import { toast } from "sonner"
 import { useExpenses } from "@/hooks/use-expenses"
 import { useMembers } from "@/hooks/use-members"
 import { useSettlements } from "@/hooks/use-settlements"
+import { Button } from "@/components/ui/button"
 import { ExpenseQuickAdd } from "./expense-quick-add"
 import { ExpenseForm } from "./expense-form"
 import { ExpenseList } from "./expense-list"
@@ -66,8 +69,23 @@ export function ExpenseDashboard({
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold">{tabName || slug}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground flex items-center gap-1">
             {t("codeLabel")} <span className="font-mono font-medium">{accessCode}</span>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={async () => {
+                const url = `${window.location.origin}/${slug}?code=${accessCode}`
+                try {
+                  await navigator.share({ url })
+                } catch {
+                  await navigator.clipboard.writeText(url)
+                  toast(t("shareFailed"))
+                }
+              }}
+            >
+              <Share2 />
+            </Button>
           </p>
         </div>
         <LanguageSwitcher />

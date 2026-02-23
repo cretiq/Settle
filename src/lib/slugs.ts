@@ -1,4 +1,4 @@
-const ADJECTIVES = [
+const ADJECTIVES_EN = [
   "happy", "sunny", "cozy", "lucky", "brave", "calm", "cool", "cute",
   "easy", "fair", "fast", "fine", "free", "glad", "gold", "good",
   "gray", "keen", "kind", "late", "lean", "live", "long", "loud",
@@ -14,7 +14,7 @@ const ADJECTIVES = [
   "tired", "tough", "upper", "vague",
 ]
 
-const NOUNS = [
+const NOUNS_EN = [
   "apple", "beach", "bread", "candy", "chair", "cloud", "dance", "dream",
   "eagle", "feast", "flame", "fox", "grape", "heart", "house", "jewel",
   "lake", "lemon", "light", "lion", "maple", "marsh", "melon", "moon",
@@ -30,9 +30,35 @@ const NOUNS = [
   "umber", "vale", "wren", "yarn", "zen", "birch",
 ]
 
-export function generateSlug(): string {
-  const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)]
-  const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)]
+// Swedish words — ö→o, ä→a, å→a for URL safety
+const ADJECTIVES_SV = [
+  "glad", "solig", "mysig", "modig", "lugn", "sval", "sot", "snabb",
+  "ratt", "fri", "fin", "gyllen", "bra", "snal", "varm", "vild",
+  "vis", "djup", "mjuk", "saker", "liten", "bred", "hog", "ren",
+  "stor", "lang", "snall", "stark", "klok", "lat", "rask", "tam",
+  "vass", "blank", "skarp", "slat", "tyst", "ljus", "mork", "rak",
+  "flat", "full", "tom", "salt", "sur", "hal", "rund", "tunn",
+  "tjock", "smal", "torr", "vat", "hel", "kal", "kall", "het",
+  "mild", "hard", "stolt", "rar", "tuff", "trygg", "pigg", "flink",
+]
+
+const NOUNS_SV = [
+  "apple", "strand", "brod", "stol", "moln", "dans", "drom", "orn",
+  "fest", "laga", "rav", "druva", "hjarta", "hus", "sjo", "citron",
+  "ljus", "lejon", "lonn", "melon", "mane", "natt", "hav", "oliv",
+  "panda", "parla", "plommon", "ros", "snacka", "orm", "gnista", "sked",
+  "sten", "storm", "socker", "bord", "tiger", "torn", "stig", "tulpan",
+  "vina", "val", "hjul", "varg", "back", "bjork", "klippa", "trana",
+  "falt", "fink", "frost", "glas", "lund", "hamn", "hage", "kulle",
+  "horn", "jade", "drake", "ek", "utter", "topp", "damm", "vaktel",
+  "as", "salvia", "sal", "slant", "torn", "tagg", "tid", "dal",
+]
+
+export function generateSlug(locale?: string): string {
+  const adjectives = locale === "sv" ? ADJECTIVES_SV : ADJECTIVES_EN
+  const nouns = locale === "sv" ? NOUNS_SV : NOUNS_EN
+  const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
+  const noun = nouns[Math.floor(Math.random() * nouns.length)]
   return `${adj}-${noun}`
 }
 

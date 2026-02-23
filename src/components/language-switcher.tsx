@@ -13,8 +13,8 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <Button variant="ghost" size="sm" onClick={handleSwitch}>
-      {locale === "sv" ? "English" : "Svenska"}
+    <Button variant="ghost" size="icon" onClick={handleSwitch} className="text-lg">
+      {locale === "sv" ? "🇸🇪" : "🇬🇧"}
     </Button>
   )
 }

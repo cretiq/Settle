@@ -21,7 +21,8 @@
     "joinError": "Could not join. Try again."
   },
   "Dashboard": {
-    "codeLabel": "Code:"
+    "codeLabel": "Code:",
+    "shareFailed": "Link copied!"
   },
   "ExpenseForm": {
     "amountLabel": "Amount ({currency})",

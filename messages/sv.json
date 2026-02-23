@@ -21,7 +21,8 @@
     "joinError": "Kunde inte g\u00e5 med. F\u00f6rs\u00f6k igen."
   },
   "Dashboard": {
-    "codeLabel": "Kod:"
+    "codeLabel": "Kod:",
+    "shareFailed": "Länk kopierad!"
   },
   "ExpenseForm": {
     "amountLabel": "Belopp ({currency})",
