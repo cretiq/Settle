@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl"
 import { StartTabButton } from "@/components/home/start-tab-button"
 import { YourTabs } from "@/components/home/your-tabs"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { ThemeSwitcher } from "@/components/theme-switcher"
 
 export default function HomePage() {
   const t = useTranslations("Home")
@@ -21,7 +22,8 @@ export default function HomePage() {
 
       <YourTabs />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-1">
+        <ThemeSwitcher />
         <LanguageSwitcher />
       </div>
     </div>

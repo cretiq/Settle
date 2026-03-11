@@ -15,6 +15,7 @@ import { BalanceView } from "./balance-view"
 import { SettlementList } from "./settlement-list"
 import { MemberList } from "./member-list"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { ThemeSwitcher } from "@/components/theme-switcher"
 import type { Expense, ExpenseSplit } from "@/lib/types"
 
 type Props = {
@@ -88,7 +89,10 @@ export function ExpenseDashboard({
             </Button>
           </p>
         </div>
-        <LanguageSwitcher />
+        <div className="flex gap-1">
+          <ThemeSwitcher />
+          <LanguageSwitcher />
+        </div>
       </div>
 
       <ExpenseQuickAdd onSelect={handleCategorySelect} />

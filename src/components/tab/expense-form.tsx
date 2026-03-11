@@ -69,6 +69,14 @@ export function ExpenseForm({
 }: Props) {
   const t = useTranslations("ExpenseForm")
   const tCat = useTranslations("Categories")
+  const [phoneFrame, setPhoneFrame] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)")
+    const update = () => setPhoneFrame(mq.matches ? document.getElementById("phone-frame") : null)
+    update()
+    mq.addEventListener("change", update)
+    return () => mq.removeEventListener("change", update)
+  }, [])
   const [amount, setAmount] = useState("")
   const [paidBy, setPaidBy] = useState(currentMemberId)
   const [description, setDescription] = useState("")
@@ -408,7 +416,7 @@ export function ExpenseForm({
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer open={open} onOpenChange={onOpenChange} container={phoneFrame ?? undefined} noBodyStyles={!!phoneFrame}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>
