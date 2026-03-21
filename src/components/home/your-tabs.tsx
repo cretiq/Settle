@@ -13,19 +13,24 @@ export function YourTabs() {
 
   return (
     <div className="space-y-3">
-      <h2 className="text-sm font-medium text-muted-foreground">{t("heading")}</h2>
+      <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+        {t("heading")}
+      </h2>
       <div className="space-y-2">
-        {tabs.map((tab) => (
+        {tabs.map((tab, i) => (
           <Link key={tab.slug} href={`/${tab.slug}`}>
-            <Card className="transition-colors hover:bg-accent">
-              <CardContent className="flex items-center justify-between py-3">
+            <Card
+              className={`hover-lift press-scale animate-fade-up border-transparent bg-base-200/80`}
+              style={{ animationDelay: `${i * 0.06}s` }}
+            >
+              <CardContent className="flex items-center justify-between py-3.5 px-4">
                 <div>
-                  <p className="font-medium">
+                  <p className="font-bold text-base">
                     {tab.name || tab.slug}
                   </p>
-                  <p className="text-xs text-muted-foreground">/{tab.slug}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">/{tab.slug}</p>
                 </div>
-                <span className="text-muted-foreground">&rarr;</span>
+                <span className="text-lg text-primary transition-transform group-hover:translate-x-1">&rarr;</span>
               </CardContent>
             </Card>
           </Link>

@@ -41,7 +41,6 @@ export function NameEntry({ tabId, onJoined }: Props) {
       .insert({ tab_id: tabId, user_id: user.id, name: trimmed })
 
     if (insertError) {
-      // Unique constraint = already a member — fall through to select below
       if (!insertError.message.includes("unique") && insertError.code !== "23505") {
         setLoading(false)
         setError(t("joinError"))
@@ -49,7 +48,6 @@ export function NameEntry({ tabId, onJoined }: Props) {
       }
     }
 
-    // Fetch the member ID (works now that the row exists and RLS passes)
     const { data: member } = await supabase
       .from("members")
       .select("id")
@@ -67,15 +65,16 @@ export function NameEntry({ tabId, onJoined }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6 pt-24">
+    <div className="flex flex-col items-center gap-8 pt-20 animate-fade-up">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <span className="text-4xl block mb-3 animate-bounce-in">&#x1F44B;</span>
+        <h1 className="text-2xl font-extrabold">{t("title")}</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
           {t("description")}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex w-full max-w-xs gap-2">
+      <form onSubmit={handleSubmit} className="flex w-full max-w-xs gap-2 animate-fade-up stagger-2">
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -83,13 +82,26 @@ export function NameEntry({ tabId, onJoined }: Props) {
           maxLength={30}
           autoFocus
           disabled={loading}
+          className="h-12 rounded-xl text-base font-semibold"
         />
-        <Button type="submit" disabled={!name.trim() || loading}>
-          {loading ? "\u2026" : t("join")}
+        <Button
+          type="submit"
+          disabled={!name.trim() || loading}
+          className="h-12 rounded-xl px-6 press-scale font-bold"
+        >
+          {loading ? (
+            <span className="w-4 h-4 border-2 border-primary-content/30 border-t-primary-content rounded-full animate-spin" />
+          ) : (
+            t("join")
+          )}
         </Button>
       </form>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p className="text-sm text-destructive font-semibold animate-fade-up">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

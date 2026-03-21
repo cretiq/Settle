@@ -65,7 +65,6 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
       refs[index + 1].current?.focus()
     }
 
-    // Auto-submit when all 4 digits entered
     if (value && index === 3) {
       const code = newDigits.join("")
       if (code.length === 4) verify(code)
@@ -90,10 +89,11 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
   const locked = attempts >= maxAttempts
 
   return (
-    <div className="flex flex-col items-center gap-6 pt-24">
+    <div className="flex flex-col items-center gap-8 pt-20 animate-fade-up">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <span className="text-4xl block mb-3 animate-bounce-in">&#x1F510;</span>
+        <h1 className="text-2xl font-extrabold">{t("title")}</h1>
+        <p className="mt-1.5 text-sm text-muted-foreground">
           {t("description")}
         </p>
       </div>
@@ -111,15 +111,25 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
             disabled={locked || checking}
-            className="h-14 w-14 text-center text-2xl font-mono"
+            className={`h-16 w-16 text-center text-3xl font-bold font-mono rounded-2xl border-2 transition-all focus:border-primary focus:ring-4 focus:ring-primary/20 animate-scale-in ${
+              digit ? "border-primary/50 bg-primary/5" : ""
+            }`}
+            style={{ animationDelay: `${i * 0.08}s` }}
             autoFocus={i === 0}
           />
         ))}
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p className="text-sm text-destructive font-semibold animate-fade-up">
+          {error}
+        </p>
+      )}
       {checking && (
-        <p className="text-sm text-muted-foreground">{t("checking")}</p>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+          {t("checking")}
+        </div>
       )}
     </div>
   )

@@ -45,7 +45,6 @@ function percentagesToAmounts(
     allocated += floored
   }
 
-  // Greedy remainder distribution (largest fractional part first)
   let remaining = totalAmount - allocated
   const byFraction = [...entries].sort((a, b) => (b.raw % 1) - (a.raw % 1))
   for (const entry of byFraction) {
@@ -90,7 +89,6 @@ export function ExpenseForm({
 
   const isEditing = !!editingExpense
 
-  // Reset form when drawer opens/closes or editing changes
   useEffect(() => {
     if (open && editingExpense && editingSplits) {
       setAmount(String(editingExpense.amount))
@@ -99,10 +97,8 @@ export function ExpenseForm({
       const splitMemberIds = new Set(editingSplits.map((s) => s.member_id))
       setSplitAmong(splitMemberIds)
 
-      // Detect if it's a custom split: check if amounts differ
       const amounts = editingSplits.map((s) => s.amount)
       const isCustom = amounts.length > 0 && new Set(amounts).size > 1
-      // Also check if amounts don't match equal split
       const equalShare = editingExpense.amount > 0 && amounts.length > 0
         ? Math.floor(editingExpense.amount / amounts.length)
         : 0
@@ -150,7 +146,6 @@ export function ExpenseForm({
 
   const parsedAmount = parseInt(amount, 10) || 0
 
-  // Recalculate custom amounts when total amount changes
   useEffect(() => {
     if (splitMode !== "custom" || parsedAmount <= 0 || customPercentages.size === 0) return
     const ids = [...splitAmong]
@@ -162,7 +157,6 @@ export function ExpenseForm({
     setCustomAmounts(am)
   }, [parsedAmount]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Custom split validation (amount mode)
   const customTotal = useMemo(() => {
     let sum = 0
     for (const id of splitAmong) {
@@ -171,7 +165,6 @@ export function ExpenseForm({
     return sum
   }, [customAmounts, splitAmong])
 
-  // Custom split validation (percent mode)
   const percentTotal = useMemo(() => {
     let sum = 0
     for (const id of splitAmong) {
@@ -180,7 +173,6 @@ export function ExpenseForm({
     return sum
   }, [customPercentages, splitAmong])
 
-  // Pre-computed percent → amount map
   const percentAmounts = useMemo(
     () => percentagesToAmounts(parsedAmount, [...splitAmong], customPercentages),
     [parsedAmount, splitAmong, customPercentages]
@@ -189,13 +181,11 @@ export function ExpenseForm({
   const customValid = splitMode === "equal"
     || (customInputMode === "amount" ? customTotal === parsedAmount : Math.abs(percentTotal - 100) < 0.01)
 
-  // Pre-fill helpers
   const prefillEqual = useCallback(() => {
     const ids = [...splitAmong]
     const count = ids.length
     if (count === 0) return
 
-    // Amounts
     const share = parsedAmount > 0 ? Math.floor(parsedAmount / count) : 0
     const rem = parsedAmount > 0 ? parsedAmount - share * count : 0
     const sorted = [...ids].sort()
@@ -203,7 +193,6 @@ export function ExpenseForm({
     sorted.forEach((id, i) => am.set(id, String(share + (i < rem ? 1 : 0))))
     setCustomAmounts(am)
 
-    // Percentages
     const pctBase = Math.floor((1000 / count)) / 10
     const pm = new Map<string, string>()
     let pctRemaining = 100
@@ -234,7 +223,6 @@ export function ExpenseForm({
       })).filter((s) => s.amount > 0)
     }
 
-    // Equal split
     const count = selected.length
     const share = Math.floor(parsedAmount / count)
     const remainder = parsedAmount - share * count
@@ -245,7 +233,6 @@ export function ExpenseForm({
     }))
   }
 
-  // "Your share" computation
   const yourShare = useMemo(() => {
     if (parsedAmount <= 0 || splitAmong.size === 0) return 0
     const splits = buildSplits()
@@ -269,7 +256,6 @@ export function ExpenseForm({
     let kr = parseInt(value, 10) || 0
     const others = [...splitAmong].filter((id) => id !== memberId)
 
-    // If this is the last unlocked member, unlock all others
     const unlocked = others.filter((id) => !lockedMembers.has(id))
     const effectiveLocked = unlocked.length === 0 ? [] : [...lockedMembers].filter((id) => id !== memberId && splitAmong.has(id))
     const effectiveUnlocked = unlocked.length === 0 ? others : unlocked
@@ -280,7 +266,6 @@ export function ExpenseForm({
       setLockedMembers((prev) => new Set(prev).add(memberId))
     }
 
-    // Clamp: can't exceed total minus locked members
     const lockedSum = effectiveLocked.reduce((sum, id) => sum + (parseInt(customAmounts.get(id) ?? "0", 10) || 0), 0)
     kr = Math.min(kr, Math.max(0, parsedAmount - lockedSum))
 
@@ -312,7 +297,6 @@ export function ExpenseForm({
     let pct = parseFloat(value) || 0
     const others = [...splitAmong].filter((id) => id !== memberId)
 
-    // If this is the last unlocked member, unlock all others
     const unlocked = others.filter((id) => !lockedMembers.has(id))
     const effectiveLocked = unlocked.length === 0 ? [] : [...lockedMembers].filter((id) => id !== memberId && splitAmong.has(id))
     const effectiveUnlocked = unlocked.length === 0 ? others : unlocked
@@ -323,7 +307,6 @@ export function ExpenseForm({
       setLockedMembers((prev) => new Set(prev).add(memberId))
     }
 
-    // Clamp: can't exceed 100 minus locked members
     const lockedPctSum = effectiveLocked.reduce((sum, id) => sum + (parseFloat(customPercentages.get(id) ?? "0") || 0), 0)
     pct = Math.min(pct, Math.max(0, Math.round((100 - lockedPctSum) * 10) / 10))
 
@@ -363,7 +346,6 @@ export function ExpenseForm({
     const pm = new Map<string, string>()
     ids.forEach((id, i) => pm.set(id, String(distribution[i] ?? 0)))
     setCustomPercentages(pm)
-    // Sync amounts from preset percentages
     if (parsedAmount > 0) {
       const am = new Map<string, string>()
       ids.forEach((id, i) => {
@@ -419,7 +401,7 @@ export function ExpenseForm({
     <Drawer open={open} onOpenChange={onOpenChange} container={phoneFrame ?? undefined} noBodyStyles={!!phoneFrame}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>
+          <DrawerTitle className="text-lg font-extrabold">
             {isEditing
               ? t("editExpense")
               : categoryInfo
@@ -439,9 +421,10 @@ export function ExpenseForm({
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0"
                 autoFocus
-                className="text-2xl pr-8" style={{ fontFamily: "var(--font-receipt)" }}
+                className="text-2xl font-bold pr-8 h-12 rounded-xl"
+                style={{ fontFamily: "var(--font-receipt)" }}
               />
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-semibold">
                 {CURRENCY}
               </span>
             </div>
@@ -453,14 +436,14 @@ export function ExpenseForm({
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder={t("descriptionPlaceholder")}
                   maxLength={100}
-                  className="text-sm"
+                  className="text-sm h-12 rounded-xl"
                 />
               </div>
             )}
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">{t("whoPaid")}</label>
+            <label className="mb-1.5 block text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("whoPaid")}</label>
             <div className="flex flex-wrap gap-2">
               {members.map((m) => (
                 <Button
@@ -468,6 +451,7 @@ export function ExpenseForm({
                   type="button"
                   variant={paidBy === m.id ? "default" : "outline"}
                   size="sm"
+                  className="rounded-xl press-scale font-semibold"
                   onClick={() => setPaidBy(m.id)}
                 >
                   {m.name}
@@ -477,7 +461,7 @@ export function ExpenseForm({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">{t("splitAmong")}</label>
+            <label className="mb-1.5 block text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("splitAmong")}</label>
             <div className="flex flex-wrap gap-2">
               {members.map((m) => (
                 <Button
@@ -485,6 +469,7 @@ export function ExpenseForm({
                   type="button"
                   variant={splitAmong.has(m.id) ? "default" : "outline"}
                   size="sm"
+                  className="rounded-xl press-scale font-semibold"
                   onClick={() => toggleMember(m.id)}
                 >
                   {m.name}
@@ -499,12 +484,13 @@ export function ExpenseForm({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">{t("splitMode")}</label>
+            <label className="mb-1.5 block text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("splitMode")}</label>
             <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant={splitMode === "equal" ? "default" : "outline"}
                 size="sm"
+                className="rounded-xl press-scale font-semibold"
                 onClick={() => setSplitMode("equal")}
               >
                 {t("equal")}
@@ -514,7 +500,7 @@ export function ExpenseForm({
                   type="button"
                   variant={splitMode === "custom" ? "default" : "outline"}
                   size="sm"
-                  className={splitMode === "custom" ? "rounded-r-none border-r-0" : ""}
+                  className={`rounded-xl press-scale font-semibold ${splitMode === "custom" ? "rounded-r-none border-r-0" : ""}`}
                   onClick={handleCustomClick}
                 >
                   {t("customSplit")}
@@ -524,7 +510,7 @@ export function ExpenseForm({
                     type="button"
                     variant="secondary"
                     size="sm"
-                    className="rounded-l-none"
+                    className="rounded-l-none rounded-r-xl font-bold"
                     onClick={() => setCustomInputMode((prev) => (prev === "amount" ? "percent" : "amount"))}
                   >
                     {customInputMode === "amount" ? CURRENCY : "%"}
@@ -532,7 +518,7 @@ export function ExpenseForm({
                 )}
               </div>
               {parsedAmount > 0 && splitAmong.size > 0 && splitMode === "equal" && (
-                <span className="ml-auto text-sm text-muted-foreground" style={{ fontFamily: "var(--font-receipt)" }}>
+                <span className="ml-auto text-sm text-muted-foreground font-semibold" style={{ fontFamily: "var(--font-receipt)" }}>
                   {t("yourShare", { amount: yourShare, currency: CURRENCY })}
                 </span>
               )}
@@ -541,31 +527,26 @@ export function ExpenseForm({
 
           {splitMode === "custom" && (
             <div className="mt-6 space-y-2">
-              {/* Preset buttons (percent mode, 2 members only) */}
               {customInputMode === "percent" && selectedMembers.length === 2 && (
-                <div className="flex flex-wrap gap-1">
-                  <Button type="button" variant="outline" className="h-6 px-2 text-xs"
+                <div className="flex flex-wrap gap-1.5">
+                  <Button type="button" variant="outline" className="h-7 px-3 text-xs rounded-lg font-bold press-scale"
                     onClick={() => applyPercentPreset([50, 50])}>50/50</Button>
-                  <Button type="button" variant="outline" className="h-6 px-2 text-xs"
+                  <Button type="button" variant="outline" className="h-7 px-3 text-xs rounded-lg font-bold press-scale"
                     onClick={() => applyPercentPreset([60, 40])}>60/40</Button>
-                  <Button type="button" variant="outline" className="h-6 px-2 text-xs"
+                  <Button type="button" variant="outline" className="h-7 px-3 text-xs rounded-lg font-bold press-scale"
                     onClick={() => applyPercentPreset([70, 30])}>70/30</Button>
                 </div>
               )}
 
-              {/* Per-member slider rows */}
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {selectedMembers.map((m) => {
                   const krVal = parseInt(customAmounts.get(m.id) ?? "0", 10) || 0
                   const pctVal = parseFloat(customPercentages.get(m.id) ?? "0") || 0
                   const sliderMax = customInputMode === "amount" ? parsedAmount : 100
                   const val = customInputMode === "amount" ? krVal : pctVal
-                  const label = customInputMode === "amount"
-                    ? `${krVal}`
-                    : `${pctVal}%`
                   return (
                     <div key={m.id} className="flex items-center gap-2">
-                      <span className="w-14 shrink-0 truncate text-base font-medium">{m.name}</span>
+                      <span className="w-14 shrink-0 truncate text-sm font-bold">{m.name}</span>
                       <input
                         type="range"
                         min={0}
@@ -581,7 +562,7 @@ export function ExpenseForm({
                         }}
                         className="range range-primary range-lg flex-1"
                       />
-                      <div className="flex w-16 shrink-0 items-center rounded border px-1.5 py-0.5">
+                      <div className="flex w-16 shrink-0 items-center rounded-lg border px-1.5 py-1">
                         <input
                           type="number"
                           inputMode={customInputMode === "amount" ? "numeric" : "decimal"}
@@ -596,10 +577,10 @@ export function ExpenseForm({
                               handleCustomPercentage(m.id, e.target.value)
                             }
                           }}
-                          className="w-full border-0 bg-transparent p-0 text-right text-base tabular-nums outline-none"
+                          className="w-full border-0 bg-transparent p-0 text-right text-sm font-bold tabular-nums outline-none"
                           style={{ fontFamily: "var(--font-receipt)" }}
                         />
-                        <span className="ml-0.5 shrink-0 text-xs text-muted-foreground">
+                        <span className="ml-0.5 shrink-0 text-xs text-muted-foreground font-semibold">
                           {customInputMode === "amount" ? CURRENCY : "%"}
                         </span>
                       </div>
@@ -607,18 +588,21 @@ export function ExpenseForm({
                   )
                 })}
               </div>
-
             </div>
           )}
 
           <DrawerFooter className="px-0">
-            <Button type="submit" disabled={!parsedAmount || loading || !customValid || splitAmong.size === 0}>
+            <Button
+              type="submit"
+              disabled={!parsedAmount || loading || !customValid || splitAmong.size === 0}
+              className="h-12 rounded-xl press-scale font-bold text-base"
+            >
               {loading
                 ? isEditing ? t("saving") : t("adding")
                 : isEditing ? t("saveChanges") : t("addExpense")}
             </Button>
             <DrawerClose asChild>
-              <Button variant="outline">{t("cancel")}</Button>
+              <Button variant="outline" className="rounded-xl font-semibold">{t("cancel")}</Button>
             </DrawerClose>
           </DrawerFooter>
         </form>

@@ -48,30 +48,36 @@ export function BalanceView({ expenses, splits, members, settlements, tabId, cur
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-medium text-muted-foreground">{t("heading")}</h3>
+      <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("heading")}</h3>
 
       {suggestedSettlements.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("settled")}</p>
+        <div className="rounded-2xl bg-success/10 border border-success/20 px-4 py-5 text-center">
+          <span className="text-2xl block mb-1">&#x2728;</span>
+          <p className="text-sm font-semibold text-success">{t("settled")}</p>
+        </div>
       ) : (
         <div className="space-y-2">
           {suggestedSettlements.map((s, i) => (
             <div
               key={i}
-              className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-2xl bg-base-200/80 px-4 py-3 animate-scale-in"
+              style={{ animationDelay: `${i * 0.05}s` }}
             >
-              <span>
-                <span className="font-medium">{s.fromName}</span>
-                {" → "}
-                <span className="font-medium">{s.toName}</span>
-              </span>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="font-bold">{s.fromName}</span>
+                <span className="text-primary text-lg">&rarr;</span>
+                <span className="font-bold">{s.toName}</span>
+              </div>
               <div className="flex items-center gap-3">
-                <span className="font-mono font-medium">
+                <span className="font-mono font-bold text-base text-primary" style={{ fontFamily: "var(--font-receipt)" }}>
                   {formatAmount(s.amount)}
                 </span>
                 {currentMemberId === s.from && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button size="sm">{t("settleButton")}</Button>
+                      <Button size="sm" className="rounded-xl press-scale font-bold">
+                        {t("settleButton")}
+                      </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>

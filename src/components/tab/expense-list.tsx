@@ -14,6 +14,13 @@ type Props = {
   onEdit: (expense: Expense) => void
 }
 
+const CAT_CLASSES: Record<string, string> = {
+  pizza: "cat-pizza",
+  drink: "cat-drink",
+  beer: "cat-beer",
+  custom: "cat-custom",
+}
+
 export function ExpenseList({ expenses, splits, members, currentMemberId, onEdit }: Props) {
   const t = useTranslations("ExpenseList")
   const tCat = useTranslations("Categories")
@@ -22,7 +29,6 @@ export function ExpenseList({ expenses, splits, members, currentMemberId, onEdit
   async function handleDelete(expense: Expense) {
     const supabase = createClient()
 
-    // Soft delete
     await supabase
       .from("expenses")
       .update({ deleted_at: new Date().toISOString() })
@@ -44,17 +50,20 @@ export function ExpenseList({ expenses, splits, members, currentMemberId, onEdit
 
   if (expenses.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-muted-foreground">
-        {t("empty")}
-      </p>
+      <div className="py-10 text-center animate-fade-up">
+        <span className="text-3xl block mb-2 animate-float">&#x1F4B8;</span>
+        <p className="text-sm text-muted-foreground">
+          {t("empty")}
+        </p>
+      </div>
     )
   }
 
   return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-medium text-muted-foreground">{t("heading")}</h3>
-      <div className="space-y-1">
-        {expenses.map((exp) => {
+    <div className="space-y-3">
+      <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("heading")}</h3>
+      <div className="space-y-1.5">
+        {expenses.map((exp, i) => {
           const cat = CATEGORIES.find((c) => c.key === exp.category)
           const isPayer = exp.paid_by === currentMemberId
           const expSplits = splits.filter((s) => s.expense_id === exp.id)
@@ -64,12 +73,15 @@ export function ExpenseList({ expenses, splits, members, currentMemberId, onEdit
           return (
             <div
               key={exp.id}
-              className="flex items-center justify-between rounded-lg border px-3 py-2"
+              className="flex items-center justify-between rounded-2xl px-3.5 py-2.5 press-scale bg-base-200/60 animate-slide-right"
+              style={{ animationDelay: `${Math.min(i, 10) * 0.04}s` }}
             >
-              <div className="flex items-center gap-2">
-                <span>{cat?.emoji ?? "\ud83d\udcdd"}</span>
+              <div className="flex items-center gap-2.5">
+                <span className={`w-10 h-10 flex items-center justify-center rounded-xl text-xl ${CAT_CLASSES[exp.category] || "cat-custom"}`}>
+                  {cat?.emoji ?? "\ud83d\udcdd"}
+                </span>
                 <div>
-                  <p className="text-sm font-medium">
+                  <p className="text-sm font-bold">
                     {exp.description || (cat ? tCat(cat.key) : exp.category)}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -79,24 +91,24 @@ export function ExpenseList({ expenses, splits, members, currentMemberId, onEdit
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-sm font-medium">
+                <span className="font-mono text-sm font-bold" style={{ fontFamily: "var(--font-receipt)" }}>
                   {formatAmount(exp.amount)}
                 </span>
                 {isPayer && (
                   <>
                     <button
                       onClick={() => onEdit(exp)}
-                      className="text-xs text-muted-foreground hover:text-foreground"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-base-300/60 transition-colors"
                       title="Edit"
                     >
-                      ✎
+                      &#x270e;
                     </button>
                     <button
                       onClick={() => handleDelete(exp)}
-                      className="text-xs text-muted-foreground hover:text-destructive"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg text-xs text-muted-foreground hover:text-destructive hover:bg-error/10 transition-colors"
                       title="Delete"
                     >
-                      ✕
+                      &#x2715;
                     </button>
                   </>
                 )}

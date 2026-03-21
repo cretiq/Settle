@@ -32,7 +32,7 @@ export function StartTabButton() {
       onClick={handleClick}
       disabled={loading}
       size="lg"
-      className="w-full text-lg"
+      className="w-full text-lg font-bold h-14 rounded-2xl press-scale animate-pulse-glow"
     >
       {loading ? t("creating") : t("startTab")}
     </Button>

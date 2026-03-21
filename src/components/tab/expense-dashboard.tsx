@@ -67,14 +67,15 @@ export function ExpenseDashboard({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between animate-fade-up">
         <div>
-          <h1 className="text-2xl font-bold">{tabName || slug}</h1>
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            {t("codeLabel")} <span className="font-mono font-medium">{accessCode}</span>
+          <h1 className="text-2xl font-extrabold gradient-text">{tabName || slug}</h1>
+          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+            {t("codeLabel")} <span className="font-mono font-semibold text-foreground/80">{accessCode}</span>
             <Button
               variant="ghost"
               size="icon-xs"
+              className="press-scale"
               onClick={async () => {
                 const url = `${window.location.origin}/${slug}?code=${accessCode}`
                 try {
@@ -95,7 +96,9 @@ export function ExpenseDashboard({
         </div>
       </div>
 
-      <ExpenseQuickAdd onSelect={handleCategorySelect} />
+      <div className="animate-fade-up stagger-2">
+        <ExpenseQuickAdd onSelect={handleCategorySelect} />
+      </div>
 
       <ExpenseForm
         open={drawerOpen}
@@ -108,30 +111,38 @@ export function ExpenseDashboard({
         editingSplits={editingSplits}
       />
 
-      <BalanceView
-        expenses={expenses}
-        splits={splits}
-        members={members}
-        settlements={settlements}
-        tabId={tabId}
-        currentMemberId={currentMemberId}
-      />
+      <div className="animate-fade-up stagger-3">
+        <BalanceView
+          expenses={expenses}
+          splits={splits}
+          members={members}
+          settlements={settlements}
+          tabId={tabId}
+          currentMemberId={currentMemberId}
+        />
+      </div>
 
-      <SettlementList
-        settlements={settlements}
-        members={members}
-        currentMemberId={currentMemberId}
-      />
+      <div className="animate-fade-up stagger-4">
+        <SettlementList
+          settlements={settlements}
+          members={members}
+          currentMemberId={currentMemberId}
+        />
+      </div>
 
-      <ExpenseList
-        expenses={expenses}
-        splits={splits}
-        members={members}
-        currentMemberId={currentMemberId}
-        onEdit={handleEdit}
-      />
+      <div className="animate-fade-up stagger-5">
+        <ExpenseList
+          expenses={expenses}
+          splits={splits}
+          members={members}
+          currentMemberId={currentMemberId}
+          onEdit={handleEdit}
+        />
+      </div>
 
-      <MemberList members={members} currentMemberId={currentMemberId} />
+      <div className="animate-fade-up stagger-6">
+        <MemberList members={members} currentMemberId={currentMemberId} />
+      </div>
     </div>
   )
 }
