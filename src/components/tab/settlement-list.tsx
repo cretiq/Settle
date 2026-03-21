@@ -50,7 +50,7 @@ export function SettlementList({ settlements, members, currentMemberId }: Props)
           return (
             <div
               key={s.id}
-              className="flex items-center justify-between rounded-2xl bg-success/10 border border-success/20 px-4 py-2.5 text-sm animate-scale-in"
+              className="soft-card !bg-success/10 flex items-center justify-between px-4 py-2.5 text-sm animate-scale-in"
               style={{ animationDelay: `${i * 0.05}s` }}
             >
               <span className="flex items-center gap-2">

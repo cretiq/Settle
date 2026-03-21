@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Nunito, IBM_Plex_Mono } from "next/font/google"
 import { NextIntlClientProvider } from "next-intl"
 import { getLocale, getMessages } from "next-intl/server"
@@ -17,9 +17,24 @@ const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
 })
 
+export const viewport: Viewport = {
+  themeColor: "#f97068",
+}
+
 export const metadata: Metadata = {
   title: "Settle",
   description: "Split expenses without the hassle",
+  manifest: "/manifest.webmanifest",
+  openGraph: {
+    title: "Settle",
+    description: "Split expenses without the hassle",
+    images: [{ url: "/icon-512.png", width: 512, height: 512 }],
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+  },
 }
 
 export default async function RootLayout({

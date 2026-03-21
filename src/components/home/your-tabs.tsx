@@ -20,10 +20,10 @@ export function YourTabs() {
         {tabs.map((tab, i) => (
           <Link key={tab.slug} href={`/${tab.slug}`}>
             <Card
-              className={`hover-lift press-scale animate-fade-up border-transparent bg-base-200/80`}
+              className={`soft-card press-scale animate-fade-up`}
               style={{ animationDelay: `${i * 0.06}s` }}
             >
-              <CardContent className="flex items-center justify-between py-3.5 px-4">
+              <CardContent className="flex items-center justify-between py-4 px-5">
                 <div>
                   <p className="font-bold text-base">
                     {tab.name || tab.slug}

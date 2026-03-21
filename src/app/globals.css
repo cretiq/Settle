@@ -11,15 +11,15 @@
   prefersdark: false;
   color-scheme: light;
 
-  --color-base-100: oklch(97.5% 0.008 75);
-  --color-base-200: oklch(95% 0.012 75);
-  --color-base-300: oklch(90% 0.016 75);
-  --color-base-content: oklch(22% 0.02 260);
+  --color-base-100: oklch(97% 0.012 70);
+  --color-base-200: oklch(94.5% 0.014 70);
+  --color-base-300: oklch(89% 0.018 70);
+  --color-base-content: oklch(25% 0.015 50);
 
-  --color-primary: oklch(68% 0.19 18);
-  --color-primary-content: oklch(99% 0.005 18);
+  --color-primary: oklch(62% 0.2 22);
+  --color-primary-content: oklch(99% 0.005 22);
 
-  --color-secondary: oklch(68% 0.16 295);
+  --color-secondary: oklch(65% 0.16 295);
   --color-secondary-content: oklch(99% 0.005 295);
 
   --color-accent: oklch(75% 0.17 165);
@@ -41,13 +41,13 @@
   --color-error-content: oklch(99% 0.005 25);
 
   --radius-selector: 1rem;
-  --radius-field: 0.75rem;
-  --radius-box: 1.25rem;
+  --radius-field: 1rem;
+  --radius-box: 1.5rem;
 
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
 
-  --border: 1px;
+  --border: 0px;
   --depth: 1;
   --noise: 0;
 }
@@ -89,13 +89,13 @@
   --color-error-content: oklch(99% 0.005 25);
 
   --radius-selector: 1rem;
-  --radius-field: 0.75rem;
-  --radius-box: 1.25rem;
+  --radius-field: 1rem;
+  --radius-box: 1.5rem;
 
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
 
-  --border: 1px;
+  --border: 0px;
   --depth: 1;
   --noise: 0;
 }
@@ -334,10 +334,30 @@
 /* ── Gradient text ── */
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(135deg, var(--color-primary), oklch(72% 0.18 340));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ── Soft card (no border, shadow only) ── */
+
+.soft-card {
+  background: var(--color-base-200);
+  border: none;
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 12px -2px oklch(0% 0 0 / 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.soft-card:hover {
+  box-shadow: 0 6px 20px -4px oklch(0% 0 0 / 0.1);
+}
+
+[data-theme="settle-dark"] .soft-card {
+  box-shadow: 0 2px 12px -2px oklch(0% 0 0 / 0.3);
+}
+[data-theme="settle-dark"] .soft-card:hover {
+  box-shadow: 0 6px 20px -4px oklch(0% 0 0 / 0.4);
 }
 
 /* ── Glass card effect ── */
@@ -345,7 +365,7 @@
 .glass-card {
   background: color-mix(in oklch, var(--color-base-100) 80%, transparent);
   backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in oklch, var(--color-base-300) 50%, transparent);
+  border: none;
 }
 
 /* ── Category color hints ── */

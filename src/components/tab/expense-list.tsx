@@ -73,7 +73,7 @@ export function ExpenseList({ expenses, splits, members, currentMemberId, onEdit
           return (
             <div
               key={exp.id}
-              className="flex items-center justify-between rounded-2xl px-3.5 py-2.5 press-scale bg-base-200/60 animate-slide-right"
+              className="soft-card flex items-center justify-between px-3.5 py-2.5 press-scale animate-slide-right"
               style={{ animationDelay: `${Math.min(i, 10) * 0.04}s` }}
             >
               <div className="flex items-center gap-2.5">

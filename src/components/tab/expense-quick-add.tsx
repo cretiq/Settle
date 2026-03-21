@@ -23,7 +23,7 @@ export function ExpenseQuickAdd({ onSelect }: Props) {
         <button
           key={cat.key}
           onClick={() => onSelect(cat.key)}
-          className={`flex h-20 flex-col items-center justify-center gap-1.5 rounded-2xl border border-transparent press-scale hover-lift animate-bounce-in transition-colors ${CAT_CLASSES[cat.key] || ""}`}
+          className={`soft-card flex h-20 flex-col items-center justify-center gap-1.5 press-scale animate-bounce-in transition-colors ${CAT_CLASSES[cat.key] || ""}`}
           style={{ animationDelay: `${i * 0.07}s` }}
         >
           <span className="text-3xl hover-wiggle">{cat.emoji}</span>
