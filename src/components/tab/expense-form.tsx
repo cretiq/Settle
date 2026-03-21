@@ -2,16 +2,9 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useTranslations } from "next-intl"
+import { ChevronLeft } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer"
 import { createClient } from "@/lib/supabase/client"
 import { CATEGORIES, CURRENCY } from "@/lib/constants"
 import type { Expense, ExpenseSplit, Member } from "@/lib/types"
@@ -68,14 +61,6 @@ export function ExpenseForm({
 }: Props) {
   const t = useTranslations("ExpenseForm")
   const tCat = useTranslations("Categories")
-  const [phoneFrame, setPhoneFrame] = useState<HTMLElement | null>(null)
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)")
-    const update = () => setPhoneFrame(mq.matches ? document.getElementById("phone-frame") : null)
-    update()
-    mq.addEventListener("change", update)
-    return () => mq.removeEventListener("change", update)
-  }, [])
   const [amount, setAmount] = useState("")
   const [paidBy, setPaidBy] = useState(currentMemberId)
   const [description, setDescription] = useState("")
@@ -397,206 +382,201 @@ export function ExpenseForm({
     onOpenChange(false)
   }
 
+  if (!open) return null
+
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} container={phoneFrame ?? undefined} noBodyStyles={!!phoneFrame}>
-      <DrawerContent>
-        <DrawerHeader className="pb-0">
-          <DrawerTitle className="text-lg font-extrabold">
+    <div className="fixed inset-0 z-50 bg-background animate-slide-up">
+      <div className="flex h-full flex-col">
+        {/* Header */}
+        <div className="flex items-center gap-2 px-4 pt-safe-top py-3">
+          <button
+            type="button"
+            className="h-10 w-10 rounded-full bg-base-200 flex items-center justify-center press-scale"
+            onClick={() => onOpenChange(false)}
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-lg font-extrabold">
             {isEditing
               ? t("editExpense")
               : categoryInfo
                 ? `${categoryInfo.emoji} ${tCat(category)}`
                 : t("addExpense")}
-          </DrawerTitle>
-        </DrawerHeader>
+          </h1>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 px-5 pt-2">
-          {/* Amount display */}
-          <div>
-            <div className="flex items-baseline gap-2">
-              <input
-                type="number"
-                inputMode="numeric"
-                min="1"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0"
-                autoFocus
-                className="w-full bg-transparent text-5xl font-extrabold outline-none placeholder:text-muted-foreground/30 tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                style={{ fontFamily: "var(--font-receipt)" }}
-              />
-              <span className="text-2xl text-muted-foreground font-semibold shrink-0">
-                {CURRENCY}
-              </span>
+        {/* Scrollable form */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto overscroll-contain px-5 pb-safe-bottom">
+          <div className="space-y-5 pb-6">
+            {/* Amount display */}
+            <div>
+              <div className="flex items-baseline gap-2">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0"
+                  autoFocus
+                  className="w-full bg-transparent text-5xl font-extrabold outline-none placeholder:text-muted-foreground/30 tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  style={{ fontFamily: "var(--font-receipt)" }}
+                />
+                <span className="text-2xl text-muted-foreground font-semibold shrink-0">
+                  {CURRENCY}
+                </span>
+              </div>
+
+              {(category === "custom" || isEditing) && (
+                <Input
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder={t("descriptionPlaceholder")}
+                  maxLength={100}
+                  className="mt-3 h-11 rounded-full bg-base-200 border-none text-sm px-4"
+                />
+              )}
             </div>
 
-            {(category === "custom" || isEditing) && (
-              <Input
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder={t("descriptionPlaceholder")}
-                maxLength={100}
-                className="mt-3 h-11 rounded-full bg-base-200 border-none text-sm px-4"
-              />
-            )}
-          </div>
+            {/* Who paid */}
+            <div>
+              <label className="mb-2 block text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("whoPaid")}</label>
+              <div className="flex flex-wrap gap-2">
+                {members.map((m) => {
+                  const isSelected = paidBy === m.id
+                  const isYou = m.id === currentMemberId
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      className={`h-9 px-4 rounded-full text-sm font-semibold press-scale transition-colors ${
+                        isSelected
+                          ? "bg-primary text-primary-content"
+                          : "bg-base-200 text-foreground"
+                      }`}
+                      onClick={() => setPaidBy(m.id)}
+                    >
+                      {isYou && isSelected ? t("you") || "You" : m.name}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
 
-          {/* Who paid */}
-          <div>
-            <label className="mb-2 block text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("whoPaid")}</label>
-            <div className="flex flex-wrap gap-2">
-              {members.map((m) => {
-                const isSelected = paidBy === m.id
-                const isYou = m.id === currentMemberId
-                return (
+            {/* Split among */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("splitAmong")}</label>
+                {splitAmong.size < members.length && (
+                  <button
+                    type="button"
+                    className="text-xs font-semibold text-primary"
+                    onClick={() => setSplitAmong(new Set(members.map((m) => m.id)))}
+                  >
+                    {t("selectAll") || "Select all"}
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {splitAmong.size === members.length && (
+                  <button
+                    type="button"
+                    className="h-9 px-4 rounded-full text-sm font-semibold press-scale bg-primary text-primary-content"
+                    onClick={() => {}}
+                  >
+                    {t("all") || "All"}
+                  </button>
+                )}
+                {members.map((m) => (
                   <button
                     key={m.id}
                     type="button"
                     className={`h-9 px-4 rounded-full text-sm font-semibold press-scale transition-colors ${
-                      isSelected
-                        ? "bg-primary text-primary-content"
+                      splitAmong.has(m.id)
+                        ? splitAmong.size === members.length ? "bg-base-200 text-foreground" : "bg-primary text-primary-content"
                         : "bg-base-200 text-foreground"
                     }`}
-                    onClick={() => setPaidBy(m.id)}
+                    onClick={() => toggleMember(m.id)}
                   >
-                    {isYou && isSelected ? t("you") || "You" : m.name}
+                    {m.name}
                   </button>
-                )
-              })}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Split among */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("splitAmong")}</label>
-              {splitAmong.size < members.length && (
+            {/* Split mode */}
+            <div>
+              <label className="mb-2 block text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("splitMode")}</label>
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="text-xs font-semibold text-primary"
-                  onClick={() => setSplitAmong(new Set(members.map((m) => m.id)))}
-                >
-                  {t("selectAll") || "Select all"}
-                </button>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {splitAmong.size === members.length && (
-                <button
-                  type="button"
-                  className="h-9 px-4 rounded-full text-sm font-semibold press-scale bg-primary text-primary-content"
-                  onClick={() => {}}
-                >
-                  {t("all") || "All"}
-                </button>
-              )}
-              {members.map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  className={`h-9 px-4 rounded-full text-sm font-semibold press-scale transition-colors ${
-                    splitAmong.has(m.id)
-                      ? splitAmong.size === members.length ? "bg-base-200 text-foreground" : "bg-primary text-primary-content"
+                  className={`h-10 px-5 rounded-full text-sm font-semibold press-scale transition-colors flex items-center gap-1.5 ${
+                    splitMode === "equal"
+                      ? "bg-primary text-primary-content"
                       : "bg-base-200 text-foreground"
                   }`}
-                  onClick={() => toggleMember(m.id)}
+                  onClick={() => setSplitMode("equal")}
                 >
-                  {m.name}
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 18h18" /></svg>
+                  {t("equal")}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Split mode */}
-          <div>
-            <label className="mb-2 block text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("splitMode")}</label>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className={`h-10 px-5 rounded-full text-sm font-semibold press-scale transition-colors flex items-center gap-1.5 ${
-                  splitMode === "equal"
-                    ? "bg-primary text-primary-content"
-                    : "bg-base-200 text-foreground"
-                }`}
-                onClick={() => setSplitMode("equal")}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 18h18" /></svg>
-                {t("equal")}
-              </button>
-              <button
-                type="button"
-                className={`h-10 px-5 rounded-full text-sm font-semibold press-scale transition-colors flex items-center gap-1.5 ${
-                  splitMode === "custom"
-                    ? "bg-primary text-primary-content"
-                    : "bg-base-200 text-foreground"
-                }`}
-                onClick={handleCustomClick}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                {t("customSplit")}
-              </button>
-              {splitMode === "custom" && (
                 <button
                   type="button"
-                  className="h-10 w-10 rounded-full bg-base-300 text-foreground text-sm font-bold press-scale flex items-center justify-center"
-                  onClick={() => setCustomInputMode((prev) => (prev === "amount" ? "percent" : "amount"))}
+                  className={`h-10 px-5 rounded-full text-sm font-semibold press-scale transition-colors flex items-center gap-1.5 ${
+                    splitMode === "custom"
+                      ? "bg-primary text-primary-content"
+                      : "bg-base-200 text-foreground"
+                  }`}
+                  onClick={handleCustomClick}
                 >
-                  {customInputMode === "amount" ? CURRENCY : "%"}
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                  {t("customSplit")}
                 </button>
+                {splitMode === "custom" && (
+                  <button
+                    type="button"
+                    className="h-10 w-10 rounded-full bg-base-300 text-foreground text-sm font-bold press-scale flex items-center justify-center"
+                    onClick={() => setCustomInputMode((prev) => (prev === "amount" ? "percent" : "amount"))}
+                  >
+                    {customInputMode === "amount" ? CURRENCY : "%"}
+                  </button>
+                )}
+              </div>
+              {parsedAmount > 0 && splitAmong.size > 0 && splitMode === "equal" && (
+                <p className="mt-2 text-sm text-muted-foreground" style={{ fontFamily: "var(--font-receipt)" }}>
+                  {t("yourShare", { amount: yourShare, currency: CURRENCY })}
+                </p>
               )}
             </div>
-            {parsedAmount > 0 && splitAmong.size > 0 && splitMode === "equal" && (
-              <p className="mt-2 text-sm text-muted-foreground" style={{ fontFamily: "var(--font-receipt)" }}>
-                {t("yourShare", { amount: yourShare, currency: CURRENCY })}
-              </p>
-            )}
-          </div>
 
-          {splitMode === "custom" && (
-            <div className="space-y-2">
-              {customInputMode === "percent" && selectedMembers.length === 2 && (
-                <div className="flex flex-wrap gap-1.5">
-                  <button type="button" className="h-7 px-3 text-xs rounded-full font-bold press-scale bg-base-200"
-                    onClick={() => applyPercentPreset([50, 50])}>50/50</button>
-                  <button type="button" className="h-7 px-3 text-xs rounded-full font-bold press-scale bg-base-200"
-                    onClick={() => applyPercentPreset([60, 40])}>60/40</button>
-                  <button type="button" className="h-7 px-3 text-xs rounded-full font-bold press-scale bg-base-200"
-                    onClick={() => applyPercentPreset([70, 30])}>70/30</button>
-                </div>
-              )}
+            {splitMode === "custom" && (
+              <div className="space-y-2">
+                {customInputMode === "percent" && selectedMembers.length === 2 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    <button type="button" className="h-7 px-3 text-xs rounded-full font-bold press-scale bg-base-200"
+                      onClick={() => applyPercentPreset([50, 50])}>50/50</button>
+                    <button type="button" className="h-7 px-3 text-xs rounded-full font-bold press-scale bg-base-200"
+                      onClick={() => applyPercentPreset([60, 40])}>60/40</button>
+                    <button type="button" className="h-7 px-3 text-xs rounded-full font-bold press-scale bg-base-200"
+                      onClick={() => applyPercentPreset([70, 30])}>70/30</button>
+                  </div>
+                )}
 
-              <div className="space-y-1.5">
-                {selectedMembers.map((m) => {
-                  const krVal = parseInt(customAmounts.get(m.id) ?? "0", 10) || 0
-                  const pctVal = parseFloat(customPercentages.get(m.id) ?? "0") || 0
-                  const sliderMax = customInputMode === "amount" ? parsedAmount : 100
-                  const val = customInputMode === "amount" ? krVal : pctVal
-                  return (
-                    <div key={m.id} className="flex items-center gap-2">
-                      <span className="w-14 shrink-0 truncate text-sm font-bold">{m.name}</span>
-                      <input
-                        type="range"
-                        min={0}
-                        max={sliderMax}
-                        step={customInputMode === "amount" ? 1 : 0.1}
-                        value={val}
-                        onChange={(e) => {
-                          if (customInputMode === "amount") {
-                            handleCustomAmount(m.id, e.target.value)
-                          } else {
-                            handleCustomPercentage(m.id, e.target.value)
-                          }
-                        }}
-                        className="range range-primary range-lg flex-1"
-                      />
-                      <div className="flex w-16 shrink-0 items-center rounded-full bg-base-200 px-2 py-1">
+                <div className="space-y-1.5">
+                  {selectedMembers.map((m) => {
+                    const krVal = parseInt(customAmounts.get(m.id) ?? "0", 10) || 0
+                    const pctVal = parseFloat(customPercentages.get(m.id) ?? "0") || 0
+                    const sliderMax = customInputMode === "amount" ? parsedAmount : 100
+                    const val = customInputMode === "amount" ? krVal : pctVal
+                    return (
+                      <div key={m.id} className="flex items-center gap-2">
+                        <span className="w-14 shrink-0 truncate text-sm font-bold">{m.name}</span>
                         <input
-                          type="number"
-                          inputMode={customInputMode === "amount" ? "numeric" : "decimal"}
+                          type="range"
                           min={0}
                           max={sliderMax}
                           step={customInputMode === "amount" ? 1 : 0.1}
-                          value={customInputMode === "amount" ? (customAmounts.get(m.id) ?? "") : (customPercentages.get(m.id) ?? "")}
+                          value={val}
                           onChange={(e) => {
                             if (customInputMode === "amount") {
                               handleCustomAmount(m.id, e.target.value)
@@ -604,38 +584,59 @@ export function ExpenseForm({
                               handleCustomPercentage(m.id, e.target.value)
                             }
                           }}
-                          className="w-full border-0 bg-transparent p-0 text-right text-sm font-bold tabular-nums outline-none"
-                          style={{ fontFamily: "var(--font-receipt)" }}
+                          className="range range-primary range-lg flex-1"
                         />
-                        <span className="ml-0.5 shrink-0 text-xs text-muted-foreground font-semibold">
-                          {customInputMode === "amount" ? CURRENCY : "%"}
-                        </span>
+                        <div className="flex w-16 shrink-0 items-center rounded-full bg-base-200 px-2 py-1">
+                          <input
+                            type="number"
+                            inputMode={customInputMode === "amount" ? "numeric" : "decimal"}
+                            min={0}
+                            max={sliderMax}
+                            step={customInputMode === "amount" ? 1 : 0.1}
+                            value={customInputMode === "amount" ? (customAmounts.get(m.id) ?? "") : (customPercentages.get(m.id) ?? "")}
+                            onChange={(e) => {
+                              if (customInputMode === "amount") {
+                                handleCustomAmount(m.id, e.target.value)
+                              } else {
+                                handleCustomPercentage(m.id, e.target.value)
+                              }
+                            }}
+                            className="w-full border-0 bg-transparent p-0 text-right text-sm font-bold tabular-nums outline-none"
+                            style={{ fontFamily: "var(--font-receipt)" }}
+                          />
+                          <span className="ml-0.5 shrink-0 text-xs text-muted-foreground font-semibold">
+                            {customInputMode === "amount" ? CURRENCY : "%"}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <DrawerFooter className="px-0 pb-2">
-            <Button
-              type="submit"
-              disabled={!parsedAmount || loading || !customValid || splitAmong.size === 0}
-              className="h-14 rounded-full press-scale font-bold text-base"
-            >
-              {loading
-                ? isEditing ? t("saving") : t("adding")
-                : isEditing ? t("saveChanges") : t("addExpense")}
-            </Button>
-            <DrawerClose asChild>
-              <button type="button" className="py-3 text-sm font-semibold text-foreground/60 hover:text-foreground transition-colors">
+            {/* Submit */}
+            <div className="pt-2 space-y-2">
+              <Button
+                type="submit"
+                disabled={!parsedAmount || loading || !customValid || splitAmong.size === 0}
+                className="w-full h-14 rounded-full press-scale font-bold text-base"
+              >
+                {loading
+                  ? isEditing ? t("saving") : t("adding")
+                  : isEditing ? t("saveChanges") : t("addExpense")}
+              </Button>
+              <button
+                type="button"
+                className="w-full py-3 text-sm font-semibold text-foreground/60 hover:text-foreground transition-colors"
+                onClick={() => onOpenChange(false)}
+              >
                 {t("cancel")}
               </button>
-            </DrawerClose>
-          </DrawerFooter>
+            </div>
+          </div>
         </form>
-      </DrawerContent>
-    </Drawer>
+      </div>
+    </div>
   )
 }

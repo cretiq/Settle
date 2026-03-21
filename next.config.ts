@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { resolve } from "path";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    resolveAlias: {
+      tailwindcss: resolve(import.meta.dirname, "node_modules/tailwindcss"),
+    },
+  },
   async headers() {
     return [
       {
