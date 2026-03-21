@@ -19,6 +19,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const viewport: Viewport = {
   themeColor: "#f97068",
+  interactiveWidget: "resizes-content",
 }
 
 export const metadata: Metadata = {

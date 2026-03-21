@@ -61,6 +61,21 @@ export function ExpenseForm({
 }: Props) {
   const t = useTranslations("ExpenseForm")
   const tCat = useTranslations("Categories")
+
+  useEffect(() => {
+    if (!open) return
+    const scrollY = window.scrollY
+    document.body.style.position = "fixed"
+    document.body.style.width = "100%"
+    document.body.style.top = `-${scrollY}px`
+    return () => {
+      document.body.style.position = ""
+      document.body.style.width = ""
+      document.body.style.top = ""
+      window.scrollTo(0, scrollY)
+    }
+  }, [open])
+
   const [amount, setAmount] = useState("")
   const [paidBy, setPaidBy] = useState(currentMemberId)
   const [description, setDescription] = useState("")
