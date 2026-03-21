@@ -3,6 +3,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 import { resolve } from "path";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.68.111"],
   turbopack: {
     resolveAlias: {
       tailwindcss: resolve(import.meta.dirname, "node_modules/tailwindcss"),
