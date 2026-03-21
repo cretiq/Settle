@@ -3,25 +3,21 @@
 import { useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
+import { CODE_LENGTH } from "@/lib/constants"
 
 type Props = {
-  onVerified: (tabId: string) => void
+  onVerified: (tabId: string, code: string) => void
   slug: string
   maxAttempts?: number
 }
 
 export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
   const t = useTranslations("CodeEntry")
-  const [digits, setDigits] = useState(["", "", "", ""])
+  const [digits, setDigits] = useState(Array(CODE_LENGTH).fill(""))
   const [error, setError] = useState("")
   const [attempts, setAttempts] = useState(0)
   const [checking, setChecking] = useState(false)
-  const refs = [
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-  ]
+  const refs = Array.from({ length: CODE_LENGTH }, () => useRef<HTMLInputElement>(null))
 
   async function verify(code: string) {
     setChecking(true)
@@ -45,12 +41,12 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
       } else {
         setError(t("wrongCode"))
       }
-      setDigits(["", "", "", ""])
+      setDigits(Array(CODE_LENGTH).fill(""))
       refs[0].current?.focus()
       return
     }
 
-    onVerified(data)
+    onVerified(data, code)
   }
 
   function handleChange(index: number, value: string) {
@@ -61,13 +57,13 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
     setDigits(newDigits)
     setError("")
 
-    if (value && index < 3) {
+    if (value && index < CODE_LENGTH - 1) {
       refs[index + 1].current?.focus()
     }
 
-    if (value && index === 3) {
+    if (value && index === CODE_LENGTH - 1) {
       const code = newDigits.join("")
-      if (code.length === 4) verify(code)
+      if (code.length === CODE_LENGTH) verify(code)
     }
   }
 
@@ -79,8 +75,8 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
 
   function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault()
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4)
-    if (pasted.length === 4) {
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, CODE_LENGTH)
+    if (pasted.length === CODE_LENGTH) {
       setDigits(pasted.split(""))
       verify(pasted)
     }
@@ -98,7 +94,7 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
         </p>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         {digits.map((digit, i) => (
           <Input
             key={i}
@@ -111,7 +107,7 @@ export function CodeEntry({ onVerified, slug, maxAttempts = 5 }: Props) {
             onKeyDown={(e) => handleKeyDown(i, e)}
             onPaste={i === 0 ? handlePaste : undefined}
             disabled={locked || checking}
-            className={`h-16 w-16 text-center text-3xl font-bold font-mono rounded-2xl border-2 transition-all focus:border-primary focus:ring-4 focus:ring-primary/20 animate-scale-in ${
+            className={`h-14 w-12 text-center text-2xl font-bold font-mono rounded-2xl border-2 transition-all focus:border-primary focus:ring-4 focus:ring-primary/20 animate-scale-in ${
               digit ? "border-primary/50 bg-primary/5" : ""
             }`}
             style={{ animationDelay: `${i * 0.08}s` }}

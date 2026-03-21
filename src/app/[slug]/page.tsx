@@ -11,7 +11,7 @@ import { ExpenseDashboard } from "@/components/tab/expense-dashboard"
 type State =
   | { step: "loading" }
   | { step: "code" }
-  | { step: "name"; tabId: string }
+  | { step: "name"; tabId: string; accessCode: string }
   | {
       step: "dashboard"
       tabId: string
@@ -91,7 +91,7 @@ export default function TabPage({
             return
           }
 
-          setState({ step: "name", tabId })
+          setState({ step: "name", tabId, accessCode: codeParam })
           return
         }
       }
@@ -123,8 +123,8 @@ export default function TabPage({
     }
   }, [slug, saveTab])
 
-  function handleVerified(tabId: string) {
-    setState({ step: "name", tabId })
+  function handleVerified(tabId: string, accessCode: string) {
+    setState({ step: "name", tabId, accessCode })
   }
 
   async function handleJoined(memberId: string) {
@@ -137,7 +137,7 @@ export default function TabPage({
       .eq("id", state.tabId)
       .single()
 
-    const accessCode = tab?.access_code ?? ""
+    const accessCode = state.accessCode
 
     saveTab({
       slug,
@@ -169,7 +169,7 @@ export default function TabPage({
   }
 
   if (state.step === "name") {
-    return <NameEntry tabId={state.tabId} onJoined={handleJoined} />
+    return <NameEntry slug={slug} accessCode={state.accessCode} onJoined={handleJoined} />
   }
 
   return (

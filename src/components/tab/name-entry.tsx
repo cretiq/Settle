@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
 
 type Props = {
-  tabId: string
+  slug: string
+  accessCode: string
   onJoined: (memberId: string) => void
 }
 
-export function NameEntry({ tabId, onJoined }: Props) {
+export function NameEntry({ slug, accessCode, onJoined }: Props) {
   const t = useTranslations("NameEntry")
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(false)
@@ -26,42 +27,21 @@ export function NameEntry({ tabId, onJoined }: Props) {
     setError("")
 
     const supabase = createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
 
-    if (!user) {
-      setError(t("sessionError"))
-      setLoading(false)
-      return
-    }
-
-    const { error: insertError } = await supabase
-      .from("members")
-      .insert({ tab_id: tabId, user_id: user.id, name: trimmed })
-
-    if (insertError) {
-      if (!insertError.message.includes("unique") && insertError.code !== "23505") {
-        setLoading(false)
-        setError(t("joinError"))
-        return
-      }
-    }
-
-    const { data: member } = await supabase
-      .from("members")
-      .select("id")
-      .eq("tab_id", tabId)
-      .eq("user_id", user.id)
-      .single()
+    const { data, error: rpcError } = await supabase.rpc("join_tab", {
+      tab_slug: slug,
+      code: accessCode,
+      member_name: trimmed,
+    })
 
     setLoading(false)
 
-    if (member) {
-      onJoined(member.id)
-    } else {
+    if (rpcError || !data) {
       setError(t("joinError"))
+      return
     }
+
+    onJoined(data.member_id)
   }
 
   return (

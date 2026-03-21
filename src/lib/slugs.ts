@@ -54,14 +54,20 @@ const NOUNS_SV = [
   "as", "salvia", "sal", "slant", "torn", "tagg", "tid", "dal",
 ]
 
+function secureRandom(max: number): number {
+  const array = new Uint32Array(1)
+  crypto.getRandomValues(array)
+  return array[0] % max
+}
+
 export function generateSlug(locale?: string): string {
   const adjectives = locale === "sv" ? ADJECTIVES_SV : ADJECTIVES_EN
   const nouns = locale === "sv" ? NOUNS_SV : NOUNS_EN
-  const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
-  const noun = nouns[Math.floor(Math.random() * nouns.length)]
+  const adj = adjectives[secureRandom(adjectives.length)]
+  const noun = nouns[secureRandom(nouns.length)]
   return `${adj}-${noun}`
 }
 
 export function generateCode(): string {
-  return Math.floor(1000 + Math.random() * 9000).toString()
+  return String(100000 + secureRandom(900000))
 }
