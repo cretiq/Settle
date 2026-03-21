@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { useTranslations } from "next-intl"
 import { ChevronLeft } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -73,6 +73,14 @@ export function ExpenseForm({
       document.body.style.width = ""
       document.body.style.top = ""
       window.scrollTo(0, scrollY)
+    }
+  }, [open])
+
+  const amountRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (open && amountRef.current) {
+      amountRef.current.focus({ preventScroll: true })
     }
   }, [open])
 
@@ -427,13 +435,13 @@ export function ExpenseForm({
             <div>
               <div className="flex items-baseline gap-2">
                 <input
+                  ref={amountRef}
                   type="number"
                   inputMode="numeric"
                   min="1"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0"
-                  autoFocus
                   className="w-full bg-transparent text-5xl font-extrabold outline-none placeholder:text-muted-foreground/30 tabular-nums [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   style={{ fontFamily: "var(--font-receipt)" }}
                 />
@@ -448,7 +456,7 @@ export function ExpenseForm({
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder={t("descriptionPlaceholder")}
                   maxLength={100}
-                  className="mt-3 h-11 rounded-full bg-base-200 border-none text-sm px-4"
+                  className="mt-3 h-11 rounded-full bg-base-200 border-none text-base px-4"
                 />
               )}
             </div>
@@ -616,7 +624,7 @@ export function ExpenseForm({
                                 handleCustomPercentage(m.id, e.target.value)
                               }
                             }}
-                            className="w-full border-0 bg-transparent p-0 text-right text-sm font-bold tabular-nums outline-none"
+                            className="w-full border-0 bg-transparent p-0 text-right text-base font-bold tabular-nums outline-none"
                             style={{ fontFamily: "var(--font-receipt)" }}
                           />
                           <span className="ml-0.5 shrink-0 text-xs text-muted-foreground font-semibold">
