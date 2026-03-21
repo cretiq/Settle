@@ -45,7 +45,10 @@
     "percentTotal": "Total: {current}%",
     "percentMismatch": "must equal 100%",
     "equalPercent": "Equal %",
-    "yourShare": "Your share: {amount} {currency}"
+    "yourShare": "Your share: {amount} {currency}",
+    "you": "You",
+    "selectAll": "Select all",
+    "all": "All"
   },
   "ExpenseList": {
     "heading": "Expenses",

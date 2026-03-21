@@ -64,12 +64,12 @@ export function BalanceView({ expenses, splits, members, settlements, tabId, cur
               style={{ animationDelay: `${i * 0.05}s` }}
             >
               <div className="flex items-center gap-2 text-sm">
-                <span className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold">{s.fromName.charAt(0)}</span>
-                <span className="text-muted-foreground text-lg">&rarr;</span>
-                <span className="w-8 h-8 rounded-full bg-secondary/15 text-secondary flex items-center justify-center text-xs font-bold">{s.toName.charAt(0)}</span>
-                <span className="font-bold ml-1">{formatAmount(s.amount)}</span>
+                <span className="rounded-full bg-primary/15 text-primary px-3 py-1 text-xs font-bold">{s.fromName}</span>
+                <span className="text-muted-foreground">&rarr;</span>
+                <span className="rounded-full bg-secondary/15 text-secondary px-3 py-1 text-xs font-bold">{s.toName}</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 shrink-0">
+                <span className="font-mono font-bold text-sm" style={{ fontFamily: "var(--font-receipt)" }}>{formatAmount(s.amount)}</span>
                 {currentMemberId === s.from && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>

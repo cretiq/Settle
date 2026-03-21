@@ -45,7 +45,10 @@
     "percentTotal": "Totalt: {current}%",
     "percentMismatch": "måste vara 100%",
     "equalPercent": "Lika %",
-    "yourShare": "Din andel: {amount} {currency}"
+    "yourShare": "Din andel: {amount} {currency}",
+    "you": "Du",
+    "selectAll": "Markera alla",
+    "all": "Alla"
   },
   "ExpenseList": {
     "heading": "Utgifter",

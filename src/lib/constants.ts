@@ -2,7 +2,7 @@ export const CATEGORIES = [
   { key: "pizza", emoji: "🍕" },
   { key: "drink", emoji: "🍹" },
   { key: "beer", emoji: "🍺" },
-  { key: "custom", emoji: "📝" },
+  { key: "custom", emoji: "✨" },
 ] as const
 
 export const CURRENCY = "kr"
